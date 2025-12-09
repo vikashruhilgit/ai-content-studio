@@ -1,0 +1,61 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Workspace data (keep structure, ignore content)
+workspace/input/*
+!workspace/input/.gitkeep
+!workspace/input/fixtures/
+workspace/output/*
+!workspace/output/.gitkeep
+workspace/temp/*
+!workspace/temp/.gitkeep
+workspace/jobs/*
+!workspace/jobs/.gitkeep
+workspace/comfyui_output/*
+!workspace/comfyui_output/.gitkeep
+
+# n8n data
+n8n/data/*
+!n8n/data/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+env/
+.eggs/
+*.egg-info/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Docker
+*.log
+
+# Test outputs
+test_output/
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Build artifacts
+dist/
+build/

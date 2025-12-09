@@ -1,0 +1,129 @@
+version: '3.8'
+
+# AI Content Studio - Full Stack
+# Usage: docker-compose up -d
+
+services:
+  # ============================================
+  # MCP SERVERS (HTTP mode for n8n)
+  # ============================================
+
+  comfyui-mcp:
+    build: ../mcps/comfyui-mcp
+    image: comfyui-mcp:latest
+    container_name: comfyui-mcp
+    ports:
+      - "${COMFYUI_HTTP_PORT:-8001}:8001"
+    volumes:
+      - ./workspace:/workspace
+    environment:
+      - COMFYUI_URL=${COMFYUI_URL:-http://host.docker.internal:8188}
+      - WORKSPACE_PATH=/workspace
+      - HTTP_PORT=8001
+      - MODE=http
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+
+  ffmpeg-mcp:
+    build: ../mcps/ffmpeg-mcp
+    image: ffmpeg-mcp:latest
+    container_name: ffmpeg-mcp
+    ports:
+      - "${FFMPEG_HTTP_PORT:-8002}:8002"
+    volumes:
+      - ./workspace:/workspace
+    environment:
+      - WORKSPACE_PATH=/workspace
+      - HTTP_PORT=8002
+      - MODE=http
+      - FFMPEG_THREADS=${FFMPEG_THREADS:-4}
+      - FFMPEG_MAX_DURATION=${FFMPEG_MAX_DURATION:-600}
+      - FFMPEG_MAX_FILE_SIZE=${FFMPEG_MAX_FILE_SIZE:-500}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+
+  utility-mcp:
+    build: ../mcps/utility-mcp
+    image: utility-mcp:latest
+    container_name: utility-mcp
+    ports:
+      - "${UTILITY_HTTP_PORT:-8003}:8003"
+    volumes:
+      - ./workspace:/workspace
+    environment:
+      - WORKSPACE_PATH=/workspace
+      - HTTP_PORT=8003
+      - MODE=http
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
+
+  # ============================================
+  # N8N ORCHESTRATOR
+  # ============================================
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-studio
+    ports:
+      - "5678:5678"
+    volumes:
+      - ./n8n/data:/home/node/.n8n
+      - ./workspace:/workspace
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-changeme}
+      - WEBHOOK_URL=${WEBHOOK_URL:-http://localhost:5678}
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE:-America/Los_Angeles}
+      # MCP endpoints (container names resolve via Docker network)
+      - COMFYUI_MCP_URL=http://comfyui-mcp:8001
+      - FFMPEG_MCP_URL=http://ffmpeg-mcp:8002
+      - UTILITY_MCP_URL=http://utility-mcp:8003
+    depends_on:
+      ffmpeg-mcp:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ============================================
+  # OPTIONAL: REDIS FOR JOB QUEUE
+  # ============================================
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-studio
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    profiles:
+      - full
+
+volumes:
+  redis_data:
+
+networks:
+  default:
+    name: ai-content-network

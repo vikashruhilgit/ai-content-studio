@@ -1,0 +1,18 @@
+{
+  "name": "News Lower Third",
+  "description": "Professional news-style lower third text overlay",
+  "settings": {
+    "position": "bottom_left",
+    "margin_x": 50,
+    "margin_y": 80,
+    "font_size": 32,
+    "font_color": "white",
+    "background_color": "black@0.7",
+    "padding": 15,
+    "border_width": 3,
+    "border_color": "#0066cc",
+    "animation": "slide_in",
+    "animation_duration": 0.5
+  },
+  "ffmpeg_filter": "drawtext=text='%TEXT%':x=50:y=h-80:fontsize=32:fontcolor=white:box=1:boxcolor=black@0.7:boxborderw=15"
+}

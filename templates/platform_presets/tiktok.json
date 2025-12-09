@@ -1,0 +1,16 @@
+{
+  "name": "TikTok",
+  "presets": {
+    "video": {
+      "aspect_ratio": "9:16",
+      "width": 1080,
+      "height": 1920,
+      "max_duration": 600,
+      "video_codec": "libx264",
+      "audio_codec": "aac",
+      "video_bitrate": "8M",
+      "audio_bitrate": "128k",
+      "fps": 30
+    }
+  }
+}

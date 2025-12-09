@@ -1,0 +1,193 @@
+{
+  "name": "MCP Smoke Test",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "start",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://ffmpeg-mcp:8002/health",
+        "options": {}
+      },
+      "id": "check-ffmpeg",
+      "name": "Check FFmpeg Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://comfyui-mcp:8001/health",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "check-comfyui",
+      "name": "Check ComfyUI Health",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://ffmpeg-mcp:8002/api/v1/tools/add_text_overlay",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"input_video\": \"/workspace/input/fixtures/test_video.mp4\",\n  \"text_content\": \"Smoke Test Success\",\n  \"position\": \"center\",\n  \"font_size\": \"48\",\n  \"font_color\": \"yellow\"\n}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "test-tool",
+      "name": "Test add_text_overlay",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition1",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "queued",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "verify-result",
+      "name": "Verify Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "result",
+              "value": "All smoke tests passed!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "success",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "result",
+              "value": "Smoke test failed - check MCP logs"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "failure",
+      "name": "Failure",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [1250, 400]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Check FFmpeg Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check FFmpeg Health": {
+      "main": [
+        [
+          {
+            "node": "Check ComfyUI Health",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check ComfyUI Health": {
+      "main": [
+        [
+          {
+            "node": "Test add_text_overlay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test add_text_overlay": {
+      "main": [
+        [
+          {
+            "node": "Verify Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Success": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-17T00:00:00.000Z",
+  "versionId": "1"
+}

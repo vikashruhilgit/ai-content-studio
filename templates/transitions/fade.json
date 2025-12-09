@@ -1,0 +1,24 @@
+{
+  "name": "Fade",
+  "description": "Smooth fade transition between clips",
+  "variants": {
+    "fade_in": {
+      "duration": 1.0,
+      "ffmpeg_filter": "fade=t=in:st=0:d=1"
+    },
+    "fade_out": {
+      "duration": 1.0,
+      "ffmpeg_filter": "fade=t=out:st=%END%:d=1"
+    },
+    "crossfade": {
+      "duration": 1.0,
+      "description": "Crossfade between two clips",
+      "ffmpeg_filter": "xfade=transition=fade:duration=1:offset=%OFFSET%"
+    },
+    "fade_black": {
+      "duration": 2.0,
+      "description": "Fade to black then fade in",
+      "ffmpeg_filter": "fade=t=out:st=%MID%:d=1,fade=t=in:st=%MID_END%:d=1"
+    }
+  }
+}

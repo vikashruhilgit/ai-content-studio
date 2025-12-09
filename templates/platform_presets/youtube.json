@@ -1,0 +1,49 @@
+{
+  "name": "YouTube",
+  "presets": {
+    "short": {
+      "aspect_ratio": "9:16",
+      "width": 1080,
+      "height": 1920,
+      "max_duration": 60,
+      "video_codec": "libx264",
+      "audio_codec": "aac",
+      "video_bitrate": "8M",
+      "audio_bitrate": "192k",
+      "fps": 30
+    },
+    "video_720p": {
+      "aspect_ratio": "16:9",
+      "width": 1280,
+      "height": 720,
+      "max_duration": null,
+      "video_codec": "libx264",
+      "audio_codec": "aac",
+      "video_bitrate": "5M",
+      "audio_bitrate": "192k",
+      "fps": 30
+    },
+    "video_1080p": {
+      "aspect_ratio": "16:9",
+      "width": 1920,
+      "height": 1080,
+      "max_duration": null,
+      "video_codec": "libx264",
+      "audio_codec": "aac",
+      "video_bitrate": "10M",
+      "audio_bitrate": "192k",
+      "fps": 30
+    },
+    "video_4k": {
+      "aspect_ratio": "16:9",
+      "width": 3840,
+      "height": 2160,
+      "max_duration": null,
+      "video_codec": "libx264",
+      "audio_codec": "aac",
+      "video_bitrate": "35M",
+      "audio_bitrate": "320k",
+      "fps": 30
+    }
+  }
+}

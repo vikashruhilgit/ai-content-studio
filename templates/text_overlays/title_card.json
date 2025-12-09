@@ -1,0 +1,16 @@
+{
+  "name": "Title Card",
+  "description": "Centered title card for video intros",
+  "settings": {
+    "position": "center",
+    "font_size": 64,
+    "font_color": "white",
+    "background_color": "transparent",
+    "shadow": true,
+    "shadow_color": "black@0.5",
+    "shadow_offset": 3,
+    "animation": "fade_in",
+    "animation_duration": 1.0
+  },
+  "ffmpeg_filter": "drawtext=text='%TEXT%':x=(w-text_w)/2:y=(h-text_h)/2:fontsize=64:fontcolor=white:shadowcolor=black@0.5:shadowx=3:shadowy=3"
+}
